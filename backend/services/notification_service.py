@@ -4,6 +4,7 @@ from config import settings
 from services.email_service import send_email_alert
 from services.telegram_service import send_telegram_message
 from services.whatsapp_service import send_whatsapp_alert
+from services.push_service import send_push_notification
 from supabase import create_client, Client
 
 logger = logging.getLogger(__name__)
@@ -127,6 +128,17 @@ async def notify_subscribers(
             tier = sub.get("tier", "free")
             if phone and tier == "premium":
                 tasks.append(send_whatsapp_alert(phone, whatsapp_msg))
+
+            # Browser Push notification
+            push_token = sub.get("push_token")
+            if push_token:
+                push_payload = {
+                    "title": f"🚨 Restock: {product_name}!",
+                    "body": f"In stock at {retailer.upper()} for ₹{price:,}.",
+                    "url": monetized_url,
+                    "icon": "/icon-192x192.png"
+                }
+                tasks.append(send_push_notification(push_token, push_payload))
 
         # Run all notifications concurrently
         if tasks:

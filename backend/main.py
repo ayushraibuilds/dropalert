@@ -307,6 +307,7 @@ class SubscriptionRequest(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     telegram_id: Optional[str] = None
+    push_token: Optional[str] = None
     products: List[str]
     retailers: Optional[List[str]] = None
     max_price: Optional[int] = None
@@ -341,10 +342,10 @@ async def subscribe_user(req: SubscriptionRequest):
     if not supabase:
         raise HTTPException(status_code=500, detail="Database connection unavailable")
 
-    if not req.email and not req.phone and not req.telegram_id:
+    if not req.email and not req.phone and not req.telegram_id and not req.push_token:
         raise HTTPException(
             status_code=400,
-            detail="At least one alert destination (email, phone, telegram_id) is required",
+            detail="At least one alert destination (email, phone, telegram_id, push_token) is required",
         )
 
     try:
@@ -359,6 +360,7 @@ async def subscribe_user(req: SubscriptionRequest):
             "email": req.email,
             "phone": req.phone,
             "telegram_id": req.telegram_id,
+            "push_token": req.push_token,
             "products": req.products,
             "retailers": req.retailers or [],
             "max_price": req.max_price,

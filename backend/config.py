@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     TWILIO_AUTH_TOKEN: Optional[str] = None
     TWILIO_WHATSAPP_NUMBER: Optional[str] = None
 
+    # Web Push VAPID Configuration
+    VAPID_PUBLIC_KEY: Optional[str] = None
+    VAPID_PRIVATE_KEY: Optional[str] = None
+    VAPID_CLAIM_EMAIL: str = "mailto:admin@dropalert.com"
+
     # Affiliate Tags
     AMAZON_AFFILIATE_TAG: Optional[str] = None
     FLIPKART_AFFILIATE_ID: Optional[str] = None
