@@ -2,7 +2,7 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -75,9 +75,9 @@ def set_cached_status(retailer: str, product_slug: str, status: dict):
 
 
 # Scraper Stats for Health Checks
-scraper_stats = {
+scraper_stats: Dict[str, Any] = {
     "last_run_time": None,
-    "last_run_duration_seconds": 0,
+    "last_run_duration_seconds": 0.0,
     "runs_count": 0,
     "success_count": 0,
     "error_count": 0,
@@ -141,7 +141,7 @@ async def run_scraper_cycle():
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         for res_tuple in results:
-            if isinstance(res_tuple, Exception):
+            if isinstance(res_tuple, BaseException):
                 logger.error(f"Scraper execution crashed with exception: {res_tuple}")
                 scraper_stats["error_count"] += 1
                 continue
